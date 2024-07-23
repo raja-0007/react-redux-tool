@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import './ProductList.css'; 
-import { useDispatch } from 'react-redux';
+import './ProductList.css';
+import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart } from './CartSlice';
 
 
 const ProductList = () => {
 
-    const dispatch = useDispatch();
-const [disabledProducts, setDisabledProducts] = useState([]); // State to store disabled products
+  const dispatch = useDispatch();
+  const testCount = useSelector(state => state.test.count)
+
+  const [disabledProducts, setDisabledProducts] = useState([]); // State to store disabled products
 
   const products = [
     { id: 1, name: 'Product A', price: 60 },
@@ -24,19 +26,21 @@ const [disabledProducts, setDisabledProducts] = useState([]); // State to store 
     <div className="product-list">
       <h2 className="product-list-title">Products</h2>
       <ul className="product-list-items">
-     {products.map(product => (
-  <li key={product.id} className="product-list-item">
-  <span>{product.name} - ${product.price}</span>
-  <button
-    className={`add-to-cart-btn ${disabledProducts.includes(product.id) ? 'disabled' : ''}`}
-    onClick={() => handleAddToCart(product)}
-    disabled={disabledProducts.includes(product.id)} // Disable button if product is in disabledProducts 
-    >
-    Add to Cart
-</button>
-  </li>
-))}
+        {products.map(product => (
+          <li key={product.id} className="product-list-item">
+            <span>{product.name} - ${product.price}</span>
+            <button
+              className={`add-to-cart-btn ${disabledProducts.includes(product.id) ? 'disabled' : ''}`}
+              onClick={() => handleAddToCart(product)}
+              disabled={disabledProducts.includes(product.id)} // Disable button if product is in disabledProducts 
+            >
+              Add to Cart
+            </button>
+          </li>
+        ))}
       </ul>
+      <div>test count is {testCount}</div>
+
     </div>
   );
 };
