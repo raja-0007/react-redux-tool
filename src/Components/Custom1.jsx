@@ -46,7 +46,7 @@ function Custom1({ data, isConnectable }) {
       <button type='button' className='nodrag' onClick={() => {
         dispatch(addCustomNode({
           id: 'custom2', type: 'custom2', position: { x: 400, y: 200 }, handleId:'custom2_top',
-          data: { label: 'five' }
+          data: { label: 'five', isVisible:true }
         }));
       dispatch(customEdge({ id: 'e6', source: data.id, sourceHandle: 'custom_right', label:'to custom2', target: 'custom2' }))
       }}> go to custom2</button>

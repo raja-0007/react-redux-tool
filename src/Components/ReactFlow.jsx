@@ -8,7 +8,8 @@ import {
   Controls, 
   MiniMap, 
   applyEdgeChanges, 
-  applyNodeChanges
+  applyNodeChanges,
+  
  } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
@@ -17,17 +18,22 @@ import { useContextCount } from './CountContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { reset } from './TestSlice2';
 import { CustomEdgeLabel } from './CustomEdgeLabel';
+import { CustomEdge } from './CustomEdge';
 
 
 
 const ReactFlowCp = () => {
-  const nodeTypes = useSelector(state=>state.test.details.nodeTypes)
+  const edgeTypes={CustomEdgeLabel:CustomEdgeLabel, CustomEdge:CustomEdge}
+  // const nodeTypes = useSelector(state=>state.test.details.nodeTypes)
   const { count, setCount} = useContextCount()
-  const countRedux = useSelector((state)=>state.test.details.count)
-  const name = useSelector((state)=>state.test.details.name)
-  const customEdge = useSelector((state)=>state.test.details.customEdge)
-  const customNode = useSelector((state)=>state.test.details.customNode)
+  
+  // const countRedux = useSelector((state)=>state.test.details.count)
+  // const name = useSelector((state)=>state.test.details.name)
+  // const customEdge = useSelector((state)=>state.test.details.customEdge)
+  // const customNode = useSelector((state)=>state.test.details.customNode)
+  const {nodeTypes, countRedux, name, customEdge, customNode, initialEdges, initialNodes} = useSelector(state=>state.test.details)
   const dispatch = useDispatch()
+  
 
   // const [count, setCount] = useState(0)
 
@@ -35,44 +41,44 @@ const ReactFlowCp = () => {
   //   setCount(newCount);
   // }, []);
 
-  const initialNodes = [
-    {
-      id: '1',
-      data: { label: 'one' },
-      position: { x: 0, y: 0 },
-      type: 'input',
-    },
-    {
-      id: '2',
-      data: { label: 'two' },
-      position: { x: 100, y: 100 },
-    },
-    {
-      id:'3',
-      position:{x:100,y:200},
-      data:{label:'three'},
-    },
-    {
-      id:'4',
-      type:'custom1',
-      position:{x:200,y:0},
-      data:{label:'four', id:'4'},
+  // const initialNodes = [
+  //   {
+  //     id: '1',
+  //     data: { label: 'one' },
+  //     position: { x: 0, y: 0 },
+  //     type: 'input',
+  //   },
+  //   {
+  //     id: '2',
+  //     data: { label: 'two' },
+  //     position: { x: 100, y: 100 },
+  //   },
+  //   {
+  //     id:'3',
+  //     position:{x:100,y:200},
+  //     data:{label:'three'},
+  //   },
+  //   {
+  //     id:'4',
+  //     type:'custom1',
+  //     position:{x:200,y:0},
+  //     data:{label:'four', id:'4'},
       
-    },
-  ];
+  //   },
+  // ];
 
 
   useEffect(()=>{
     console.log(count)
   },[count])
 
-  const initialEdges =[
-    {id:'e1', source:'1', target:'2', label:'to 2', type:'step'},
-    {id:'e2', source:'2', target:'3'},
-    {id:'e3', source:'1', target:'4'},
-    {id:'e4', source:'4', sourceHandle: 'custom_right', target:'2'},
-    // {id:'e5', source:'4', sourceHandle: 'custom_bottom', target:'3'}
-  ]
+  // const initialEdges =[
+  //   {id:'e1', source:'1', target:'2', label:'to 2', type:'CustomEdgeLabel'},
+  //   {id:'e2', source:'2', target:'3',  component:CustomEdge},
+  //   {id:'e3', source:'1', target:'4'},
+  //   {id:'e4', source:'4', animated:true, deletable:true, sourceHandle: 'custom_right', target:'2'},
+  //   // {id:'e5', source:'4', sourceHandle: 'custom_bottom', target:'3'}
+  // ]
 
   const [nodes, setNodes] = useState(initialNodes);
 const [edges, setEdges] = useState(initialEdges);
@@ -85,7 +91,12 @@ useEffect(()=>{
 
 },[customEdge])
 
-
+useEffect(()=>{
+  if(Object.keys(customNode).length > 0){
+    setNodes([...nodes, customNode])
+    console.log([...nodes, customNode])
+  }
+},[customNode])
 
 const onNodesChange = useCallback(
   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -111,12 +122,14 @@ const onConnect = useCallback(
         onNodesChange={onNodesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         onEdgesChange={onEdgesChange}
          fitView>
         <Background />
         <CustomEdgeLabel/>
         <Controls />
         <MiniMap />
+        
       </ReactFlow>
     </div>
   )

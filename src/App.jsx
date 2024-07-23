@@ -11,7 +11,6 @@ const App = () => {
   return (
 
     <div>
-      <h1 className='app-heading'>E-Commerce Application</h1>
       {/* <ProductList />
       
       <TestComp3/>
