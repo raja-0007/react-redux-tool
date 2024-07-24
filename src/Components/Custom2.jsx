@@ -6,7 +6,7 @@ import { useDispatch,  } from 'react-redux';
 import { deleteNode } from './TestSlice2';
 
 const Custom2 = ({ data }) => {
-  const id = useSelector((state) => state.test.details.customNode.handleId)
+  // const id = useSelector((state) => state.test.details.customNode.handleId)
   const connection = useConnection();
   const dispatch = useDispatch()
   const edgesCount = useEdges()
@@ -27,7 +27,7 @@ const Custom2 = ({ data }) => {
       <Handle
         position={Position.Top}
         type='target'
-        id={id}
+        id={data.handleId}
       />
     </div>
   )

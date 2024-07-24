@@ -18,7 +18,7 @@ export function CustomEdgeLabel({ label ,sourceX,
     targetX,
     targetY,
     targetPosition: 'top',
-    borderRadius:0,
+    borderRadius:5,
   
   });
   // console.log(edgePath)

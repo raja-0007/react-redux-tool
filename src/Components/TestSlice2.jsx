@@ -6,7 +6,7 @@ const TestSlice2 = createSlice({
     name: 'test',
     initialState: {
         details: {
-            count: 0,
+            countRedux: 0,
             name: 'test',
             nodeTypes: {
                 custom1: Custom1,
@@ -44,24 +44,22 @@ const TestSlice2 = createSlice({
                 { id: 'e4', source: '4', sourceHandle: 'custom_right', target: '2' },
                 // {id:'e5', source:'4', sourceHandle: 'custom_bottom', target:'3'}
             ],
-            customNode: {},
-            customEdge: {},
         }
     },
     reducers: {
         increment(state, action) {
             console.log(state, action, action.payload)
-            state.details.count += 1;
+            state.details.countRedux += 1;
         },
         decrement(state, action) {
             console.log(state, action, action.payload)
 
-            state.details.count -= 1;
+            state.details.countRedux -= 1;
         },
         reset(state, action) {
             console.log(state, action, action.payload)
 
-            state.details.count = 0;
+            state.details.countRedux = 0;
         },
         handleNameChange(state, action) {
             console.log(state, action, action.payload)
@@ -70,17 +68,33 @@ const TestSlice2 = createSlice({
         },
         customEdge(state, action) {
             console.log(state, action, action.payload)
-            state.details.customEdge = action.payload;
+            state.details.initialEdges.push(action.payload);
         },
         addCustomNode(state, action) {
             // state.details.nodeTypes = {...state.details.nodeTypes, [action.payload.name]: state}
-            state.details.customNode = action.payload;
+            // state.details.customNode = action.payload;
             state.details.initialNodes.push(action.payload);
             console.log(state, action, action.payload)
         },
         deleteNode(state, action) {
             console.log(state, action, action.payload)
             state.details.initialNodes = state.details.initialNodes.filter(node => node.id !== action.payload);
+
+        },
+        handleNodesChange(state, action) {
+            console.log(state, action, action.payload)
+            state.details.initialNodes = action.payload;
+            
+        },
+        handleEdgesChange(state, action) {
+            console.log(state, action, action.payload)
+            state.details.initialEdges = action.payload;
+        },
+        handleOnConnect(state,action){
+            // console.log(state, action, action.payload)
+            state.details.initialEdges = action.payload;
+
+            console.log('connectionsconnectionsconnectionsconnections',state, action.payload)
 
         }
     }
@@ -90,6 +104,7 @@ export const {
     increment, decrement, reset,
     handleNameChange,
     customEdge, addCustomNode,
+    handleNodesChange, handleEdgesChange, handleOnConnect,
     deleteNode
 } = TestSlice2.actions;
 export default TestSlice2.reducer;

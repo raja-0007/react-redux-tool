@@ -7,7 +7,7 @@ import { addCustomNode, customEdge, decrement, handleNameChange, increment } fro
 function Custom1({ data, isConnectable }) {
   const { count, setCount } = useContextCount()
 
-  const countRedux = useSelector((state) => state.test.details.count)
+  const countRedux = useSelector((state) => state.test.details.countRedux)
   const dispatch = useDispatch()
   const name = useSelector((state) => state.test.details.name)
   const nodeTypes = useSelector((state) => state.test.details.nodeTypes)
@@ -45,8 +45,8 @@ function Custom1({ data, isConnectable }) {
       <br />
       <button type='button' className='nodrag' onClick={() => {
         dispatch(addCustomNode({
-          id: 'custom2', type: 'custom2', position: { x: 400, y: 200 }, handleId:'custom2_top',
-          data: { label: 'five', isVisible:true }
+          id: 'custom2', type: 'custom2', position: { x: 400, y: 200 }, 
+          data: { label: 'five', isVisible:true, handleId:'custom2_top', }
         }));
       dispatch(customEdge({ id: 'e6', source: data.id, sourceHandle: 'custom_right', label:'to custom2', target: 'custom2' }))
       }}> go to custom2</button>

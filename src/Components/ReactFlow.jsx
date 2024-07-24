@@ -9,6 +9,7 @@ import {
   MiniMap, 
   applyEdgeChanges, 
   applyNodeChanges,
+
   
  } from '@xyflow/react';
 
@@ -16,7 +17,7 @@ import '@xyflow/react/dist/style.css';
 import Custom1 from './Custom1';
 import { useContextCount } from './CountContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { reset } from './TestSlice2';
+import { customEdge, reset } from './TestSlice2';
 import { CustomEdgeLabel } from './CustomEdgeLabel';
 import { CustomEdge } from './CustomEdge';
 
@@ -31,84 +32,102 @@ const ReactFlowCp = () => {
   // const name = useSelector((state)=>state.test.details.name)
   // const customEdge = useSelector((state)=>state.test.details.customEdge)
   // const customNode = useSelector((state)=>state.test.details.customNode)
-  const {nodeTypes, countRedux, name, customEdge, customNode, initialEdges, initialNodes} = useSelector(state=>state.test.details)
+  const {nodeTypes, countRedux, name, initialEdges, initialNodes, handleOnConnect, handleNodesChange, handleEdgesChange,} = useSelector(state=>state.test.details)
   const dispatch = useDispatch()
   
-
+ console.log('initialNodesinitialNodesinitialNodesinitialNodesinitialNodesinitialNodes',initialNodes, initialEdges)
   // const [count, setCount] = useState(0)
 
-  // const stableSetCount = useCallback((newCount) => {
-  //   setCount(newCount);
-  // }, []);
+  
 
-  // const initialNodes = [
-  //   {
-  //     id: '1',
-  //     data: { label: 'one' },
-  //     position: { x: 0, y: 0 },
-  //     type: 'input',
-  //   },
-  //   {
-  //     id: '2',
-  //     data: { label: 'two' },
-  //     position: { x: 100, y: 100 },
-  //   },
-  //   {
-  //     id:'3',
-  //     position:{x:100,y:200},
-  //     data:{label:'three'},
-  //   },
-  //   {
-  //     id:'4',
-  //     type:'custom1',
-  //     position:{x:200,y:0},
-  //     data:{label:'four', id:'4'},
-      
-  //   },
-  // ];
+ 
 
+  const [nodes, setNodes] = useState([]);
+const [edges, setEdges] = useState([]);
 
-  useEffect(()=>{
-    console.log(count)
-  },[count])
+function areArraysEqual(arr1, arr2) {
+  if (arr1.length !== arr2.length) return false;
 
-  // const initialEdges =[
-  //   {id:'e1', source:'1', target:'2', label:'to 2', type:'CustomEdgeLabel'},
-  //   {id:'e2', source:'2', target:'3',  component:CustomEdge},
-  //   {id:'e3', source:'1', target:'4'},
-  //   {id:'e4', source:'4', animated:true, deletable:true, sourceHandle: 'custom_right', target:'2'},
-  //   // {id:'e5', source:'4', sourceHandle: 'custom_bottom', target:'3'}
-  // ]
+  // Convert each object to a JSON string and sort them
+  const sortedArr1 = arr1.map(obj => JSON.stringify(obj)).sort();
+  const sortedArr2 = arr2.map(obj => JSON.stringify(obj)).sort();
 
-  const [nodes, setNodes] = useState(initialNodes);
-const [edges, setEdges] = useState(initialEdges);
+  // Compare the sorted arrays
+  return sortedArr1.every((value, index) => value === sortedArr2[index]);
+}
 
 useEffect(()=>{
-
-  if(Object.keys(customEdge).length > 0){
-    setEdges((eds) => addEdge(customEdge, eds))
+  if(!areArraysEqual(initialNodes, nodes)){
+    setNodes(initialNodes)
   }
-
-},[customEdge])
-
-useEffect(()=>{
-  if(Object.keys(customNode).length > 0){
-    setNodes([...nodes, customNode])
-    console.log([...nodes, customNode])
+  if(!areArraysEqual(initialEdges, edges)){
+    setEdges(initialEdges)
   }
-},[customNode])
+},[initialNodes, initialEdges])
+// useEffect(()=>{
+
+//   if(Object.keys(customEdge).length > 0){
+//     setEdges((eds) => addEdge(customEdge, eds))
+//   }
+
+// },[customEdge])
+
+// useEffect(()=>{
+//   if(Object.keys(customNode).length > 0){
+//     setNodes([...nodes, customNode])
+//     console.log([...nodes, customNode])
+//   }
+// },[customNode])
 
 const onNodesChange = useCallback(
-  (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+  (changes) =>{
+    let nodes = []
+     setNodes((nds) => {
+      nodes = applyNodeChanges(changes, nds)
+      return nodes
+    })
+
+    dispatch(handleNodesChange(nodes))
+   },
 [],
 )
+// const onNodesChange =useCallback(
+//     (changes) =>
+//       dispatch(handleNodesChange(changes)),
+//   [],
+//   )
+// const onEdgesChange = useCallback(
+//   (changes) => 
+//     dispatch(handleEdgesChange(changes)),
+//   [],
+// );  
 const onEdgesChange = useCallback(
-  (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+  (changes) => {
+    let edges = []
+    setEdges((eds) => {
+      
+      edges = applyEdgeChanges(changes, eds)
+      return edges
+    })
+
+    dispatch(handleEdgesChange(edges))
+  },
   [],
 );  
 
+// const handleDispatchConnects=(connects)=>{
+//   console.log('handleDispatchConnectshandleDispatchConnectshandleDispatchConnectshandleDispatchConnects', connects)
+//   dispatch(handleOnConnect(connects))
+// }
 const onConnect = useCallback(
-  (params) => setEdges((eds) => addEdge(params, eds)),
+  (params) => {
+    let newConnects = addEdge(params, edges)
+      // return newConnects
+    // })
+    
+    console.log('handleOnConnecthandleOnConnecthandleOnConnecthandleOnConnect', newConnects)
+    dispatch(customEdge(newConnects[newConnects.length-1]))
+  },
   [],
 );
 
