@@ -17,14 +17,13 @@ import '@xyflow/react/dist/style.css';
 import Custom1 from './Custom1';
 import { useContextCount } from './CountContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { customEdge, reset } from './TestSlice2';
+import { customEdge, deleteEdge, reset, setSelectedEdgeId } from './TestSlice2';
 import { CustomEdgeLabel } from './CustomEdgeLabel';
 import { CustomEdge } from './CustomEdge';
 
 
 
 const ReactFlowCp = () => {
-  const edgeTypes={CustomEdgeLabel:CustomEdgeLabel, CustomEdge:CustomEdge}
   // const nodeTypes = useSelector(state=>state.test.details.nodeTypes)
   const { count, setCount} = useContextCount()
   
@@ -32,10 +31,10 @@ const ReactFlowCp = () => {
   // const name = useSelector((state)=>state.test.details.name)
   // const customEdge = useSelector((state)=>state.test.details.customEdge)
   // const customNode = useSelector((state)=>state.test.details.customNode)
-  const {nodeTypes, countRedux, name, initialEdges, initialNodes, handleOnConnect, handleNodesChange, handleEdgesChange,} = useSelector(state=>state.test.details)
+  const {nodeTypes, countRedux, edgeTypes, name, initialEdges, initialNodes, handleOnConnect, handleNodesChange, handleEdgesChange,} = useSelector(state=>state.test.details)
   const dispatch = useDispatch()
   
- console.log('initialNodesinitialNodesinitialNodesinitialNodesinitialNodesinitialNodes',initialNodes, initialEdges)
+//  console.log('initialNodesinitialNodesinitialNodesinitialNodesinitialNodesinitialNodes',initialNodes, initialEdges)
   // const [count, setCount] = useState(0)
 
   
@@ -81,13 +80,13 @@ useEffect(()=>{
 
 const onNodesChange = useCallback(
   (changes) =>{
-    let nodes = []
+    let nodesList = []
      setNodes((nds) => {
-      nodes = applyNodeChanges(changes, nds)
-      return nodes
+      nodesList = applyNodeChanges(changes, nds)
+      return nodesList
     })
-
-    dispatch(handleNodesChange(nodes))
+    console.log('nodesnodesnodesnodesnodesnodesnodesnodesnodesnodes', nodesList)
+    dispatch(handleNodesChange(nodesList))
    },
 [],
 )
@@ -103,14 +102,14 @@ const onNodesChange = useCallback(
 // );  
 const onEdgesChange = useCallback(
   (changes) => {
-    let edges = []
+    let edgesList = []
     setEdges((eds) => {
       
-      edges = applyEdgeChanges(changes, eds)
-      return edges
+      edgesList = applyEdgeChanges(changes, eds)
+      return edgesList
     })
 
-    dispatch(handleEdgesChange(edges))
+    dispatch(handleEdgesChange(edgesList))
   },
   [],
 );  
@@ -131,6 +130,24 @@ const onConnect = useCallback(
   [],
 );
 
+const onEdgeClick =useCallback((event, element) => {
+  // if (element.id.startsWith('e')) { // Check if the clicked element is an edge
+  //   setSelectedEdgeId(element.id);
+  dispatch(setSelectedEdgeId(element.id))
+    console.log(`Selected edge ID: ${element.id}`, element);
+  
+}, [])
+
+useEffect(()=>{
+
+  document.addEventListener('keydown',(e)=>{
+    if(e.key === 'Delete'){
+      console.log('deleteeedeleteeedeleteee')
+      dispatch(deleteEdge())
+    }
+  })
+},[])
+
   return (
     <div style={{width:'700px', height:'500px', margin:'auto', padding:'50px', backgroundColor:'white', boxShadow:'10px 10px 5px gray'}}>
       <p style={{margin:0, padding:0}} >count : {countRedux}, name: {name}</p>
@@ -138,11 +155,13 @@ const onConnect = useCallback(
       <ReactFlow 
       nodes={nodes}
        edges={edges}
+       onEdgeClick={onEdgeClick}
         onNodesChange={onNodesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         onEdgesChange={onEdgesChange}
+        
          fitView>
         <Background />
         <CustomEdgeLabel/>
